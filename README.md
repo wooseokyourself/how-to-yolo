@@ -166,13 +166,16 @@ you@you:~ $ sudo dpkg -i <filename>
 
 본 예제에 존재하는 darknet의 경우 [AlexayAB의 Darknet](https://github.com/AlexeyAB/darknet)을 클론해왔습니다.   
 
-### Download Pre-trained Model
+## Download Pre-trained Model
 https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137 를 다운로드하여 darknet 디렉토리 안에 저장합니다. 리눅스의 경우 다음을 통해 다운받을 수 있습니다.
 ```console
 you@you:~ $ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137
 ```
 
-### Compile and Build Darknet
+## Compile and Build Darknet
+
+### 1. Modify Makefile
+
 빌드 전 ```darknet/Makefile```을 본인의 환경에 맞게 수정해야 합니다.   
    
 ```Makefile```의 상위 9줄은 다음과 같습니다.
@@ -211,12 +214,14 @@ GPU를 사용할 경우, 주석을 보며 본인의 GPU에 맞는 라인의 ```A
    
 다음부터는 리눅스와 윈도우를 구별하여 설명하겠습니다.
 
-## Linux
+#### Linux
 darknet 디렉토리 내에서 ```make``` 커맨드로 컴파일 및 빌드를 진행합니다.
 ```console
 you@you:~/darknet $ make
 ```
    
+### 2. Modify yolov4.cfg
+
 성공하였다면, yolov4.cfg 파일을 수정해줘야 합니다. 본 레포지터리 내에 있는 darknet의 경우 ```darknet/yolov4.cfg```로 저장되어있지만, AlexayAB의 darknet은 ```darknet/cfg/yolov4.cfg``` 내에 있습니다.   
 ```yolov4.cfg```의 상위 17~22번째 줄(두 번째 문단)은 다음과 같습니다.
 ```shell
@@ -249,6 +254,8 @@ height=608
 이제 ```classes=80```인 부분을 찾습니다. 총 세 줄이 존재하며, 각각 968, 1056, 1144 번 째 줄에 있습니다. 이를 내가 학습하고자 하는 객체의 수로 변경하여줍니다. 본 예제의 경우 2이므로 ```classes=2```가 됩니다.   
 또한, 각 ```classes``` 바로 위에 있는 ```filters=255```를 ```(객체수 + 5) * 3```으로 변경해줍니다. 각각 961, 1049, 1137 번 째 줄에 있습니다. 본 예제의 경우 ```(2 + 5) * 3 = 21``` 이므로 ```filters=21```이 됩니다.   
 
+### 3. Run Train
+
 위 모든 사항을 진행하였다면, 이제 학습을 진행할 차례입니다. 위에서 만들었던 ```data``` 디렉토리를 ```darknet``` 디렉토리 내로 이동한 뒤, ```darknet``` 디렉토리 내에서 다음과 같이 학습용 darknet을 실행합니다.
 
 ```console
@@ -260,23 +267,73 @@ you@you:~/darknet $ nohup ./darknet detector train ".data 경로" ".cfg 경로" 
 ```   
 + 학습은 백그라운드에서 진행되므로 터미널을 종료해도 됩니다. 
 + ```darknet/nohup.out``` 파일에 학습 로그가 실시간으로 저장됩니다.
-+ 학습 그래프는 ```darknet/chart.png```에 실시간으로 저장됩니다. 이 학습 그래프는 웹브라우저에서 http://localhost:8090 에 접속하여 확인할 수 있습니다.
 + 실행 후 약 30초 정도 기다린 뒤 로그를 확인하여 Error 등이 없는지, 혹은 ```ps -ef``` 명령어를 통해 프로세스가 잘 작동되고 있는지 확인하여 학습이 잘 진행중임을 확인해야 합니다.
 + ```backup/``` 디렉토리에 1000번 단위로 학습된 모델이 저장됩니다.
++ 학습 그래프는 ```darknet/chart.png```에 실시간으로 저장됩니다. 이 학습 그래프는 웹브라우저에서 http://localhost:8090 에 접속하여 확인할 수 있습니다.
++ 학습 그래프에서 파랑색 선은 Loss Function(실제 값과 예측 값의 차이), 빨강색 선은 mAP(객체인식 정확도)를 나타냅니다. 통상적으로 학습이 진행될수록 Loss 값은 감소, mAP값은 증가되어야 합니다.
++ 학습 시의 mAP는 학습데이터를 기준으로 계산된 값입니다. 가령, 한 번의 학습에 64개의 이미지를 사용한다면 학습이 누적된 모델에 대해 ```darknet/data/train```에 존재하지만 이전 학습에 사용되지 않은 20개의 이미지를 이용하여 mAP를 계산합니다. (정확한 숫자는 아닙니다.)
++ YOLO 개발자는 경험상 하나의 객체당 2000번의 학습을 진행하는 것이 Overfitting을 방지하면서 최대한의 학습횟수를 보장한다고 합니다. 학습이 완료될 경우 ```darknet/backup```에 ```yolov4-1000.weights```, ```yolov4-2000.weights```, ```yolov4-best.weights```, ```yolov4-final.weights``` 과 같은 형식으로 모델이 생성되는데, 제 경험상 클래스 3개 이하로 적은 환경에서는 ```yolov4-best.weights```가 매우 적은 학습횟수에 잡히는 경우가 종종 있었습니다. 그러므로 ```darknet/backup``` 디렉토리에서 ```ls -la``` 혹은 다른 수단을 통해 각 모델이 생성된 시점을 확인한 뒤, ```yolov4-best.weights```와 ```yolov4-final.weights``` 이 생성된 시점을 비교하여 둘의 차이가 극명하다면 ```yolov4-final.weights```를 실제 모델로 채택하고, 그렇지 않다면 ```yolov4-best.weights```를 채택하는 것을 추천합니다.   
+학습 그래프 이미지는 다음과 같습니다. (본 예제를 실제로 학습한 그래프가 아닙니다.)
+![chart_my-yolov4](https://user-images.githubusercontent.com/49421142/110059747-2c87b100-7da8-11eb-82dc-c7364f3e4d39.png)
 
 
+### 4. Run Test
+```console
+you@you:~/darknet $ ./darknet detector map data/obj.data yolov4.cfg backup/yolov4-final.weights -dont_show -ext_output < data/test.txt > result.txt
+```
+각 파라미터는 다음을 의미합니다.
+```console
+you@you:~/darknet $ ./darknet detector map ".data 경로" ".cfg 경로" "학습된 모델 경로" -dont_show -ext_output < "test이미지 경로가 저장된 파일" > "테스트 결과를 출력할 파일"
+```
 
-### 테스트
-~~~
-./darknet detector map ".data 경로" ".cfg 경로" "학습된 모델 경로" -dont_show -ext_output < data/test.txt > result.txt
-~~~
+테스트가 완료되면 ```result.txt``` 파일의 모습은 다음과 같습니다. (본 예제를 실제로 학습하고 테스트한 결과가 아닙니다.)
+```
+ CUDNN_HALF=1 
+net.optimized_memory = 0 
+mini_batch = 1, batch = 64, time_steps = 1, train = 0 
+nms_kind: greedynms (1), beta = 0.600000 
+nms_kind: greedynms (1), beta = 0.600000 
+nms_kind: greedynms (1), beta = 0.600000 
 
-- backup/ 에서 best 가중치파일 사용
-- result.txt에 결과값이 저장됨
+ seen 64, trained: 384 K-images (6 Kilo-batches_64) 
 
-* 결과이미지를 얻고 싶다면 다음 darknet을 사용   
+ calculation mAP (mean average precision)...
+ Detection layer: 139 - type = 28 
+ Detection layer: 150 - type = 28 
+ Detection layer: 161 - type = 28 
+
+ detections_count = 1029, unique_truth_count = 578  
+ rank = 0 of ranks = 1029 
+ rank = 100 of ranks = 1029 
+ rank = 200 of ranks = 1029 
+ rank = 300 of ranks = 1029 
+ rank = 400 of ranks = 1029 
+ rank = 500 of ranks = 1029 
+ rank = 600 of ranks = 1029 
+ rank = 700 of ranks = 1029 
+ rank = 800 of ranks = 1029 
+ rank = 900 of ranks = 1029 
+ rank = 1000 of ranks = 1029 
+class_id = 0, name = excavator, ap = 98.15%   	 (TP = 224, FP = 14) 
+class_id = 1, name = dump_truck, ap = 92.66%   	 (TP = 238, FP = 35) 
+class_id = 2, name = concrete_mixer_truck, ap = 97.13%   	 (TP = 78, FP = 5) 
+
+ for conf_thresh = 0.25, precision = 0.91, recall = 0.93, F1-score = 0.92 
+ for conf_thresh = 0.25, TP = 540, FP = 54, FN = 38, average IoU = 78.74 % 
+
+ IoU threshold = 50 %, used Area-Under-Curve for each unique Recall 
+ mean average precision (mAP@0.50) = 0.959766, or 95.98 % 
+
+Set -points flag:
+ `-points 101` for MS COCO 
+ `-points 11` for PascalVOC 2007 (uncomment `difficult` in voc.data) 
+ `-points 0` (AUC) for ImageNet, PascalVOC 2010-2012, your custom dataset
+```
+
+여기에서 ```mean average precision (mAP@0.50) = 0.959766, or 95.98 % ``` 이 모델을 ```darknet/data/test``` 내 데이터들로 테스트하여 도출된 mAP를 의미합니다. 각 객체별 mAP값은 그 위의 ```class_id = 0```, ```class_id = 1``` 등에 나타납니다. 
+
++ 결과이미지를 얻고 싶다면 다음 darknet을 사용하는것을 추천합니다. ```Makefile```, ```yolov4.cfg```, ```data```, 모델파일을 새로 옮기고 재컴파일 하여 사용하면 됩니다.
 https://github.com/vincentgong7/VG_AlexeyAB_darknet
-
-./darknet detector batch <.data> <.cfg> <.weights> -dont_show batch <input images dir/> <output images dir/> -ext_output > result.txt
-
-- 이를 사용하려면 테스트 이미지인 002566.jpg ~ 002850.jpg 를 data/dataset/images/ 가 아닌 다른 디렉토리에 따로 저장해야함
+```console
+you@you:~/darknet $ ./darknet detector batch <.data> <.cfg> <.weights> -dont_show batch <input images dir/> <output images dir/> -ext_output > result.txt
+```
