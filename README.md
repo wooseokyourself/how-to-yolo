@@ -317,7 +317,9 @@ PS Code\darknet>       powershell -ExecutionPolicy Bypass -File .\build.ps1
 # Train and Test
 ### Run Train
 
-위 모든 사항을 진행하였다면, 이제 학습을 진행할 차례입니다. 위에서 만들었던 ```data``` 디렉토리를 ```darknet``` 디렉토리 내로 이동한 뒤, ```darknet``` 디렉토리 내에서 다음과 같이 학습용 darknet을 실행합니다.
+위 모든 사항을 진행하였다면, 이제 학습을 진행할 차례입니다. 위에서 만들었던 ```data``` 디렉토리를 ```darknet``` 디렉토리 내로 이동한 뒤, ```darknet``` 디렉토리 내에서 다음과 같이 학습용 darknet을 실행합니다.   
+   
+**윈도우의 경우 ```./darknet``` 을 ```./darknet.exe``` 로 변경하여 실행합니다.**
 
 ```console
 you@you:~/darknet $ nohup ./darknet detector train data/obj.data yolov4.cfg yolov4.conv.137 -dont_show -mjpeg_port 8090 -map &
