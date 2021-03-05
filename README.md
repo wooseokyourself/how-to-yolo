@@ -211,7 +211,7 @@ you@you:~ $ sudo dpkg -i <filename>
 
 # Build Darknet
 
-##### **본 예제에 존재하는 darknet의 경우 [AlexayAB의 Darknet](https://github.com/AlexeyAB/darknet)을 클론해왔으며, 이 레포지토리의 ```README.md``` 를 번역한 수준에 지나지 않습니다. 자세한 내용은 본 레포지토리를 참고하시는 걸 추천드립니다.**       
+##### **본 예제에 존재하는 darknet의 경우 [AlexayAB의 Darknet](https://github.com/AlexeyAB/darknet)을 클론해왔으며, 이 레포지토리의 ```README.md``` 를 번역한 수준에 지나지 않습니다. 자세한 내용은 본 레포지토리의 설명을 참고하시는 걸 추천드립니다.([```darknet/READMD.md```](https://github.com/wooseokyourself/how-to-yolo/tree/main/darknet))**       
 
 ### Download Pre-trained Model
 https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137 를 다운로드하여 darknet 디렉토리 안에 저장합니다. 리눅스의 경우 다음을 통해 다운받을 수 있습니다.
