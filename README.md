@@ -273,7 +273,8 @@ you@you:~/darknet $ nohup ./darknet detector train ".data 경로" ".cfg 경로" 
 + 학습 그래프에서 파랑색 선은 Loss Function(실제 값과 예측 값의 차이), 빨강색 선은 mAP(객체인식 정확도)를 나타냅니다. 통상적으로 학습이 진행될수록 Loss 값은 감소, mAP값은 증가되어야 합니다.
 + 학습 시의 mAP는 학습데이터를 기준으로 계산된 값입니다. 가령, 한 번의 학습에 64개의 이미지를 사용한다면 학습이 누적된 모델에 대해 ```darknet/data/train```에 존재하지만 이전 학습에 사용되지 않은 20개의 이미지를 이용하여 mAP를 계산합니다. (정확한 숫자는 아닙니다.)
 + YOLO 개발자는 경험상 하나의 객체당 2000번의 학습을 진행하는 것이 Overfitting을 방지하면서 최대한의 학습횟수를 보장한다고 합니다. 학습이 완료될 경우 ```darknet/backup```에 ```yolov4-1000.weights```, ```yolov4-2000.weights```, ```yolov4-best.weights```, ```yolov4-final.weights``` 과 같은 형식으로 모델이 생성되는데, 제 경험상 클래스 3개 이하로 적은 환경에서는 ```yolov4-best.weights```가 매우 적은 학습횟수에 잡히는 경우가 종종 있었습니다. 그러므로 ```darknet/backup``` 디렉토리에서 ```ls -la``` 혹은 다른 수단을 통해 각 모델이 생성된 시점을 확인한 뒤, ```yolov4-best.weights```와 ```yolov4-final.weights``` 이 생성된 시점을 비교하여 둘의 차이가 극명하다면 ```yolov4-final.weights```를 실제 모델로 채택하고, 그렇지 않다면 ```yolov4-best.weights```를 채택하는 것을 추천합니다.   
-학습 그래프 이미지는 다음과 같습니다. (본 예제를 실제로 학습한 그래프가 아닙니다.)
+   
+학습 그래프 이미지는 다음과 같습니다. (본 예제를 실제로 학습한 그래프가 아닙니다.)   
 ![chart_my-yolov4](https://user-images.githubusercontent.com/49421142/110059747-2c87b100-7da8-11eb-82dc-c7364f3e4d39.png)
 
 
