@@ -82,7 +82,7 @@ data/train/000005.jpg
 
 ### Directory: data/test
 테스트에 사용될 이미지와 그 이미지의 라벨링이 저장된 디렉토리입니다. 이미지와 그에 해당하는 라벨링 텍스트파일의 이름이 같음에 유의해야 합니다.   
-※ *통상적으로 ```train```과 ```test```의 비율을 9:1로 맞추면 됩니다. 물론, 테스트에 사용되는 이미지는 학습에 사용되는 이미지들과 중복이 없어야 하며, 학습에 사용된 이미지와 비슷한 구성으로 존재해야 합니다. 가령 학습에는 서있는 고양이와 앉아있는 고양이, 그리고 벌러덩 누워있는 고양이 등의 이미지가 골고루 존재하지만 테스트에 사용되는 이미지에는 누워있는 고양이밖에 존재하지 않을 경우 테스트 결과가 정확하다고 판단할 수 없습니다. 하지만 학습 자체를 경험해보기 위해 10장 정도의 매우 적은 이미지만을 학습할 경우, Underfitting 으로 인해 학습에 사용되지 않은 전혀 새로운 검출이 제대로 되지 않을 확률이 높으므로 그냥 학습에 사용된 이미지를 동시에 테스트에도 사용하여 검출여부만 따지면 될 것 같습니다.*
+※ *통상적으로 ```train```과 ```test```의 비율을 9:1로 맞추면 됩니다. 물론, 테스트에 사용되는 이미지는 학습에 사용되는 이미지들과 중복이 없어야 하며, 학습에 사용된 이미지와 비슷한 구성으로 존재해야 합니다. 가령 학습에는 서있는 고양이와 앉아있는 고양이, 그리고 벌러덩 누워있는 고양이 등의 이미지가 골고루 존재하지만 테스트에 사용되는 이미지에는 누워있는 고양이밖에 존재하지 않을 경우 테스트 결과가 정확하다고 판단할 수 없습니다. 하지만 학습 자체를 경험해보기 위해 10장 정도의 매우 적은 이미지만을 학습할 경우, Underfitting 으로 인해 학습에 사용되지 않은 전혀 새로운 검출이 제대로 되지 않을 확률이 높으므로 그냥 학습에 사용된 이미지를 동시에 테스트에도 사용하여 검출여부만 따지면 될 것 같습니다.* 
 
 ### File: data/test.txt
 ```data/test``` 디렉토리 내에 있는 이미지 파일의 목록이 쓰여져있습니다. 위 디렉토리를 예로 들면 다음과 같습니다.
@@ -110,14 +110,48 @@ backup=backup/
 + ```names```는 ```data/obj.names``` 파일의 경로를 의미합니다. 경로가 ```data```부터 시작함에 유의해야 합니다.
 + ```backup```는 학습된 모델이 저장될 경로를 의미합니다.
 
-# (Optional) GPU Requirements in Ubuntu
+# Modify yolov4.cfg
+yolov4.cfg 파일을 본인의 데이터셋에 맞게 수정해줘야 합니다. 본 레포지터리 내에 있는 darknet의 경우 ```darknet/yolov4.cfg```에 저장되어있지만, AlexayAB의 darknet은 ```darknet/cfg/yolov4.cfg``` 내에 있습니다.   
+```yolov4.cfg```의 상위 17~22번째 줄(두 번째 문단)은 다음과 같습니다.
+```shell
+learning_rate=0.0013
+burn_in=1000
+max_batches = 500500
+policy=steps
+steps=400000,450000
+scales=.1,.1
+```   
+여기에서 다음과 같은 내용을 변경합니다.
++ ```max_batches```는 총 학습 횟수를 의미합니다. 기본적으로 ```내 데이터에서 검출하고자 하는 객체의 수 * 2000``` 의 수를 지정합니다. 본 예제에서는 2개의 객체를 학습하고자 하므로 ```4000```으로 변경합니다. 
++ ```steps```는 총 학습 횟수의 80%, 90% 를 의미합니다. 본 예제에서 총 학습횟수는 ```max_batches=4000```이므로 ```steps=3200,3600```으로 수정합니다.   
+   
+이후 상위 8개 줄(첫 번째 문단)을 수정할 차례입니다.
+```shell
+[net]
+batch=64
+subdivisions=8
+# Training
+#width=512
+#height=512
+width=608
+height=608
+```
++ ```batch```는 한 번의 학습에 사용되는 데이터의 수를 의미합니다. 변경할 필요 없습니다.
++ ```subdivisions```는 한 번의 학습에서 ```batch```를 다시 몇 분할로 나누어서 학습할 것인지를 나타내는 값입니다. 64 이하인 2의 거듭제곱 형태여야 하며, 추후 학습시 메모리가 부족하다며 학습이 종료될 경우 이 값을 늘려야 합니다.
++ ```width=608```과 ```height=608```을 주석처리 한 후 ```width=512```과 ```height=512```의 주석을 해제합니다.
+   
+이제 ```classes=80```인 부분을 찾습니다. 총 세 줄이 존재하며, 각각 968, 1056, 1144 번 째 줄에 있습니다. 이를 내가 학습하고자 하는 객체의 수로 변경하여줍니다. 본 예제의 경우 2이므로 ```classes=2```가 됩니다.   
+또한, 각 ```classes``` 바로 위에 있는 ```filters=255```를 ```(객체수 + 5) * 3```으로 변경해줍니다. 각각 961, 1049, 1137 번 째 줄에 있습니다. 본 예제의 경우 ```(2 + 5) * 3 = 21``` 이므로 ```filters=21```이 됩니다.  
 
-+ 본 장은 nVidia의 GPU가 존재하는 우분투 환경에서 CUDA 를 사용하여 학습을 가속화하기 위해 그래픽드라이버 및 CUDA, cuDNN 을 설치하는 과정을 설명합니다. 우분투에 Nvidia 드라이버가 설치되어있지 않아야 합니다.   
+# (Optional) GPU Requirements in Linux
+
++ 본 장은 nVidia의 GPU가 존재하는 우분투 환경에서 CUDA 를 사용하여 학습을 가속화하기 위해 그래픽드라이버 및 CUDA, cuDNN 을 설치하는 과정을 설명합니다. 우분투를 기준으로 하였으며, 우분투에 Nvidia 드라이버가 설치되어있지 않아야 합니다.   
++ 윈도우로는 한 번도 해보지 않아서 잘 모르겠습니다. 윈도우에서도 CUDA와 cuDNN을 설치하면 됩니다. 
 + **Ubuntu 16.04 및 2020년 9월 기준입니다.** Ubuntu 20.04 를 사용할 경우 본 장을 무시하고 다음 링크를 참고하여 설치하시기 바랍니다. CUDA는 10.0 이상, cuDNN은 7.0 이상의 버전이어야 합니다.
     + [CUDA 설치 가이드](https://linuxconfig.org/how-to-install-cuda-on-ubuntu-20-04-focal-fossa-linux)
     + [cuDNN 다운로드 nVidia 공식 페이지](https://docs.nvidia.com/deeplearning/cudnn/archives/cudnn_741/cudnn-install/index.html)
 
-## CUDA 10.0
+### CUDA 10.0
 1. Download [CUDA Toolkit 10.0 in nvidia site](https://developer.nvidia.com/cuda-10.0-download-archive?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1804&target_type=deblocal).
 
 2. Open downloaded file.
@@ -152,7 +186,7 @@ you@you:~ $ sudo reboot now
 you@you:~ $ nvcc --version
 ```
 
-## cnDNN 7.5
+### cnDNN 7.5
 1. Download [cuDNN 7.5 in nvidia site](https://developer.nvidia.com/cudnn).
 - cuDNN Runtime Library for Ubuntu18.04 (Deb)
 - cuDNN Developer Library for Ubuntu18.04 (Deb)
@@ -164,19 +198,17 @@ you@you:~ $ sudo dpkg -i <filename>
 
 # Build Darknet
 
-본 예제에 존재하는 darknet의 경우 [AlexayAB의 Darknet](https://github.com/AlexeyAB/darknet)을 클론해왔습니다.   
+##### **본 예제에 존재하는 darknet의 경우 [AlexayAB의 Darknet](https://github.com/AlexeyAB/darknet)을 클론해왔으며, 이 레포지토리의 ```README.md``` 를 번역한 수준에 지나지 않습니다. 자세한 내용은 본 레포지토리를 참고하시는 걸 추천드립니다.**       
 
-## Download Pre-trained Model
+### Download Pre-trained Model
 https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137 를 다운로드하여 darknet 디렉토리 안에 저장합니다. 리눅스의 경우 다음을 통해 다운받을 수 있습니다.
 ```console
 you@you:~ $ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137
 ```
 
-## Compile and Build Darknet
+### Compile and Build Darknet : Linux (using ```make```) - Not Recommended
 
-### 1. Modify Makefile
-
-빌드 전 ```darknet/Makefile```을 본인의 환경에 맞게 수정해야 합니다.   
+```darknet/Makefile```을 본인의 환경에 맞게 수정해야 합니다.   
    
 ```Makefile```의 상위 9줄은 다음과 같습니다.
 ```
@@ -210,51 +242,66 @@ OS := $(shell uname)
 ...
 ```
    
-GPU를 사용할 경우, 주석을 보며 본인의 GPU에 맞는 라인의 ```ARCH= ``` 주석을 해제하면 됩니다.
+GPU를 사용할 경우, 주석을 보며 본인의 GPU에 맞는 라인의 ```ARCH= ``` 주석을 해제하면 됩니다.   
    
-다음부터는 리눅스와 윈도우를 구별하여 설명하겠습니다.
-
-#### Linux
-darknet 디렉토리 내에서 ```make``` 커맨드로 컴파일 및 빌드를 진행합니다.
+이후 darknet 디렉토리 내에서 ```make``` 커맨드로 컴파일 및 빌드를 진행합니다.
 ```console
 you@you:~/darknet $ make
 ```
-   
-### 2. Modify yolov4.cfg
 
-성공하였다면, yolov4.cfg 파일을 수정해줘야 합니다. 본 레포지터리 내에 있는 darknet의 경우 ```darknet/yolov4.cfg```로 저장되어있지만, AlexayAB의 darknet은 ```darknet/cfg/yolov4.cfg``` 내에 있습니다.   
-```yolov4.cfg```의 상위 17~22번째 줄(두 번째 문단)은 다음과 같습니다.
-```shell
-learning_rate=0.0013
-burn_in=1000
-max_batches = 500500
-policy=steps
-steps=400000,450000
-scales=.1,.1
-```   
-여기에서 다음과 같은 내용을 변경합니다.
-+ ```max_batches```는 총 학습 횟수를 의미합니다. 기본적으로 ```내 데이터에서 검출하고자 하는 객체의 수 * 2000``` 의 수를 지정합니다. 본 예제에서는 2개의 객체를 학습하고자 하므로 ```4000```으로 변경합니다. 
-+ ```steps```는 총 학습 횟수의 80%, 90% 를 의미합니다. 본 예제에서 총 학습횟수는 ```max_batches=4000```이므로 ```steps=3200,3600```으로 수정합니다.   
-   
-이후 상위 8개 줄(첫 번째 문단)을 수정할 차례입니다.
-```shell
-[net]
-batch=64
-subdivisions=8
-# Training
-#width=512
-#height=512
-width=608
-height=608
+### Compile and Build Darknet : Linux (using ```CMake```) - Recommended
+
+위의 ```Makefile```에서 내 환경에 맞는 변수를 직접 수정했던 것과 달리, ```CMake```를 사용할 경우 환경변수들을 자동으로 설정해준다는 편리함이 있습니다.   
+단지 ```darknet``` 디렉토리 내에서 ```./build.sh```를 실행하기만 하면 됩니다.
+```console
+you@you:~/darknet $ ./build.sh
 ```
-+ ```batch```는 한 번의 학습에 사용되는 데이터의 수를 의미합니다. 변경할 필요 없습니다.
-+ ```subdivisions```는 한 번의 학습에서 ```batch```를 다시 몇 분할로 나누어서 학습할 것인지를 나타내는 값입니다. 64 이하인 2의 거듭제곱 형태여야 하며, 추후 학습시 메모리가 부족하다며 학습이 종료될 경우 이 값을 늘려야 합니다.
-+ ```width=608```과 ```height=608```을 주석처리 한 후 ```width=512```과 ```height=512```의 주석을 해제합니다.
    
-이제 ```classes=80```인 부분을 찾습니다. 총 세 줄이 존재하며, 각각 968, 1056, 1144 번 째 줄에 있습니다. 이를 내가 학습하고자 하는 객체의 수로 변경하여줍니다. 본 예제의 경우 2이므로 ```classes=2```가 됩니다.   
-또한, 각 ```classes``` 바로 위에 있는 ```filters=255```를 ```(객체수 + 5) * 3```으로 변경해줍니다. 각각 961, 1049, 1137 번 째 줄에 있습니다. 본 예제의 경우 ```(2 + 5) * 3 = 21``` 이므로 ```filters=21```이 됩니다.   
 
-### 3. Run Train
+### Compile and Build Darknet : Windows (using ```CMake```) - Not Recommended
+***아래는 원본 darknet의 README.md를 그대로 복사해 온 내용입니다.***   
+   
+Requires: 
+* MSVS: https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community
+* Cmake GUI: `Windows win64-x64 Installer`https://cmake.org/download/
+* Download Darknet zip-archive with the latest commit and uncompress it: [master.zip](https://github.com/AlexeyAB/darknet/archive/master.zip)
+
+In the Windows: 
+
+
+* Start (button) -> All programms -> Cmake -> Cmake (gui) -> 
+
+* [look at image](https://habrastorage.org/webt/pz/s1/uu/pzs1uu4heb7vflfcjqn-lxy-aqu.jpeg) In Cmake: Enter input path to the darknet Source, and output path to the Binaries -> Configure (button) -> Optional platform for generator: `x64`  -> Finish -> Generate -> Open Project -> 
+
+* in MS Visual Studio: Select: x64 and Release -> Build -> Build solution
+
+* find the executable file `darknet.exe` in the output path to the binaries you specified
+
+![x64 and Release](https://habrastorage.org/webt/ay/ty/f-/aytyf-8bufe7q-16yoecommlwys.jpeg)
+
+### Compile and Build Darknet : Windows (using ```CMake```) - Recommended
+
+***아래는 원본 darknet의 README.md를 그대로 복사해 온 내용입니다.***   
+   
+1. Install Visual Studio 2017 or 2019. In case you need to download it, please go here: [Visual Studio Community](http://visualstudio.com)
+
+2. Install CUDA (at least v10.0) enabling VS Integration during installation.
+
+3. Open Powershell (Start -> All programs -> Windows Powershell) and type these commands:
+
+```PowerShell
+PS Code\>              git clone https://github.com/microsoft/vcpkg
+PS Code\>              cd vcpkg
+PS Code\vcpkg>         $env:VCPKG_ROOT=$PWD
+PS Code\vcpkg>         .\bootstrap-vcpkg.bat
+PS Code\vcpkg>         .\vcpkg install darknet[full]:x64-windows #replace with darknet[opencv-base,cuda,cudnn]:x64-windows for a quicker install of dependencies
+PS Code\vcpkg>         cd ..
+PS Code\>              cd darknet # darknet 디렉토리로 이동
+PS Code\darknet>       powershell -ExecutionPolicy Bypass -File .\build.ps1
+```
+
+# Train and Test
+### Run Train
 
 위 모든 사항을 진행하였다면, 이제 학습을 진행할 차례입니다. 위에서 만들었던 ```data``` 디렉토리를 ```darknet``` 디렉토리 내로 이동한 뒤, ```darknet``` 디렉토리 내에서 다음과 같이 학습용 darknet을 실행합니다.
 
@@ -279,7 +326,7 @@ you@you:~/darknet $ nohup ./darknet detector train ".data 경로" ".cfg 경로" 
 ![chart_my-yolov4](https://user-images.githubusercontent.com/49421142/110059747-2c87b100-7da8-11eb-82dc-c7364f3e4d39.png)
 
 
-### 4. Run Test
+### Run Test
 ```console
 you@you:~/darknet $ ./darknet detector map data/obj.data yolov4.cfg backup/yolov4-final.weights -dont_show -ext_output < data/test.txt > result.txt
 ```
