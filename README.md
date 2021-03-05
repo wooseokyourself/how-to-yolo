@@ -2,6 +2,19 @@
 
 Darknet을 통해 YOLO 모델을 위한 커스텀 데이터를 만들고, 학습하고, 테스트하는 방법을 설명합니다.   
 딥러닝과 Object Detection에 대한 원리 혹은 개념 설명은 포함하지 않습니다.   
++ [Labelling](https://github.com/wooseokyourself/how-to-yolo#labelling)
++ [Struct Custom Dataset](https://github.com/wooseokyourself/how-to-yolo#struct-custom-dataset)
++ [Modify yolov4.cfg](https://github.com/wooseokyourself/how-to-yolo#modify-yolov4cfg)
++ [(Optional) GPU Requirements in Linux](https://github.com/wooseokyourself/how-to-yolo#optional-gpu-requirements-in-linux)
++ Build Darknet
+    + [Download Pre-trained Model](https://github.com/wooseokyourself/how-to-yolo#download-pre-trained-model)
+    + [Compile and Build Darknet : Linux (using ```make```) - Not Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--linux-using-make---not-recommended)
+    + [Compile and Build Darknet : Linux (using CMake) - Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--linux-using-cmake---recommended)
+    + [Compile and Build Darknet : Windows (using CMake) - Not Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--windows-using-cmake---not-recommended)
+    + [Compile and Build Darknet : Windows (using CMake) - Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--windows-using-cmake---recommended)
++ Train and Test
+    + [Run Train](https://github.com/wooseokyourself/how-to-yolo#run-train)
+    + [Run Test](https://github.com/wooseokyourself/how-to-yolo#run-test)
 
 # Labelling
 
