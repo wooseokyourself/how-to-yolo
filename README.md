@@ -219,7 +219,7 @@ https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yo
 you@you:~ $ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137
 ```
 
-### Compile and Build Darknet : Linux (using ```make```) - Not Recommended
+## Compile and Build Darknet : Linux (using ```make```) - Not Recommended
 
 ```darknet/Makefile```을 본인의 환경에 맞게 수정해야 합니다.   
    
@@ -262,7 +262,7 @@ GPU를 사용할 경우, 주석을 보며 본인의 GPU에 맞는 라인의 ```A
 you@you:~/darknet $ make
 ```
 
-### Compile and Build Darknet : Linux (using ```CMake```) - Recommended
+## Compile and Build Darknet : Linux (using ```CMake```) - Recommended
 
 위의 ```Makefile```에서 내 환경에 맞는 변수를 직접 수정했던 것과 달리, ```CMake```를 사용할 경우 환경변수들을 자동으로 설정해준다는 편리함이 있습니다.   
 단지 ```darknet``` 디렉토리 내에서 ```./build.sh```를 실행하기만 하면 됩니다.
@@ -271,7 +271,7 @@ you@you:~/darknet $ ./build.sh
 ```
    
 
-### Compile and Build Darknet : Windows (using ```CMake```) - Not Recommended
+## Compile and Build Darknet : Windows (using ```CMake```) - Not Recommended
 ***아래는 원본 darknet의 README.md를 그대로 복사해 온 내용입니다.***   
    
 Requires: 
@@ -292,7 +292,7 @@ In the Windows:
 
 ![x64 and Release](https://habrastorage.org/webt/ay/ty/f-/aytyf-8bufe7q-16yoecommlwys.jpeg)
 
-### Compile and Build Darknet : Windows (using ```vcpkg```) - Recommended
+## Compile and Build Darknet : Windows (using ```vcpkg```) - Recommended
 
 ***아래는 원본 darknet의 README.md를 그대로 복사해 온 내용입니다.***   
    
