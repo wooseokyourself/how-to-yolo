@@ -122,23 +122,23 @@ backup=backup/
 
 2. Open downloaded file.
 ```console
-$ sudo dpkg -i cuda-repo-ubuntu1804-10-0-local-10.0.130-410.48_1.0-1_amd64.deb
+you@you:~ $ sudo dpkg -i cuda-repo-ubuntu1804-10-0-local-10.0.130-410.48_1.0-1_amd64.deb
 ```
 
 3. (Optional) Add apt-key from cuda-repo.
 ```console
-$ sudo apt-key add /var/cuda-repo-<version>/7fa2af80.pub
+you@you:~ $ sudo apt-key add /var/cuda-repo-<version>/7fa2af80.pub
 ```
 
 4. Install cuda.
 ```console
-$ sudo apt-get update
-$ sudo apt-get install cuda-10-0
+you@you:~ $ sudo apt-get update
+you@you:~ $ sudo apt-get install cuda-10-0
 ```
 
 5. Configure .bashrc.
 ```console
-$ vim ~/.bashrc
+you@you:~ $ vim ~/.bashrc
 ```
 and add below two lines.
 ```console
@@ -148,8 +148,8 @@ export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRAR
 
 6. Reboot system and confirm installation.
 ```console
-$ sudo reboot now
-$ nvcc --version
+you@you:~ $ sudo reboot now
+you@you:~ $ nvcc --version
 ```
 
 ## cnDNN 7.5
@@ -159,7 +159,7 @@ $ nvcc --version
 
 2. Open downloaded files.
 ~~~console 
-$ sudo dpkg -i <filename>
+you@you:~ $ sudo dpkg -i <filename>
 ~~~
 
 # Build Darknet
@@ -169,7 +169,7 @@ $ sudo dpkg -i <filename>
 ### Download Pre-trained Model
 https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137 를 다운로드하여 darknet 디렉토리 안에 저장합니다. 리눅스의 경우 다음을 통해 다운받을 수 있습니다.
 ```console
-$ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137
+you@you:~ $ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137
 ```
 
 ### Compile and Build Darknet
@@ -214,7 +214,7 @@ GPU를 사용할 경우, 주석을 보며 본인의 GPU에 맞는 라인의 ```A
 ## Linux
 darknet 디렉토리 내에서 ```make``` 커맨드로 컴파일 및 빌드를 진행합니다.
 ```console
-darknet$ make
+you@you:~/darknet $ make
 ```
    
 성공하였다면, yolov4.cfg 파일을 수정해줘야 합니다. 본 레포지터리 내에 있는 darknet의 경우 ```darknet/yolov4.cfg```로 저장되어있지만, AlexayAB의 darknet은 ```darknet/cfg/yolov4.cfg``` 내에 있습니다.   
@@ -252,11 +252,11 @@ height=608
 위 모든 사항을 진행하였다면, 이제 학습을 진행할 차례입니다. 위에서 만들었던 ```data``` 디렉토리를 ```darknet``` 디렉토리 내로 이동한 뒤, ```darknet``` 디렉토리 내에서 다음과 같이 학습용 darknet을 실행합니다.
 
 ```console
-darknet$ nohup ./darknet detector train data/obj.data yolov4.cfg yolov4.conv.137 -dont_show -mjpeg_port 8090 -map &
+you@you:~/darknet $ nohup ./darknet detector train data/obj.data yolov4.cfg yolov4.conv.137 -dont_show -mjpeg_port 8090 -map &
 ```   
 각 파라미터는 다음을 의미합니다.
 ```console
-darknet$ nohup ./darknet detector train ".data 경로" ".cfg 경로" "pre-trained 모델 경로" -dont_show -mjpeg_port 8090 -map &
+you@you:~/darknet $ nohup ./darknet detector train ".data 경로" ".cfg 경로" "pre-trained 모델 경로" -dont_show -mjpeg_port 8090 -map &
 ```   
 + 학습은 백그라운드에서 진행되므로 터미널을 종료해도 됩니다. 
 + ```darknet/nohup.out``` 파일에 학습 로그가 실시간으로 저장됩니다.
