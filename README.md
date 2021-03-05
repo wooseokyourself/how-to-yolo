@@ -53,7 +53,7 @@ the-cutest-creature
 
 # Struct Custom Dataset
 
-```dataset``` 라는 디렉토리를 하나 만듭니다. 본 디렉토리는 다음과 같이 구성되어야 합니다.   
+```data``` 라는 디렉토리를 하나 만듭니다. 본 디렉토리는 다음과 같이 구성되어야 합니다.   
 ```
    data
     ├── obj.data
