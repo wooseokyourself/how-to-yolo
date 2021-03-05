@@ -343,6 +343,7 @@ you@you:~/darknet $ nohup ./darknet detector train ".data 경로" ".cfg 경로" 
 
 
 ### Run Test
+**윈도우의 경우 ```./darknet``` 을 ```./darknet.exe``` 로 변경하여 실행합니다.**
 ```console
 you@you:~/darknet $ ./darknet detector map data/obj.data yolov4.cfg backup/yolov4-final.weights -dont_show -ext_output < data/test.txt > result.txt
 ```
