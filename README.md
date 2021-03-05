@@ -9,9 +9,9 @@ Darknet을 통해 YOLO 모델을 위한 커스텀 데이터를 만들고, 학습
 + Build Darknet
     + [Download Pre-trained Model](https://github.com/wooseokyourself/how-to-yolo#download-pre-trained-model)
     + [Compile and Build Darknet : Linux (using ```make```) - Not Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--linux-using-make---not-recommended)
-    + [Compile and Build Darknet : Linux (using CMake) - Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--linux-using-cmake---recommended)
-    + [Compile and Build Darknet : Windows (using CMake) - Not Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--windows-using-cmake---not-recommended)
-    + [Compile and Build Darknet : Windows (using CMake) - Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--windows-using-cmake---recommended)
+    + [Compile and Build Darknet : Linux (using ```CMake```) - Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--linux-using-cmake---recommended)
+    + [Compile and Build Darknet : Windows (using ```CMake```) - Not Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--windows-using-cmake---not-recommended)
+    + [Compile and Build Darknet : Windows (using ```vcpkg```) - Recommended](https://github.com/wooseokyourself/how-to-yolo#compile-and-build-darknet--windows-using-cmake---recommended)
 + Train and Test
     + [Run Train](https://github.com/wooseokyourself/how-to-yolo#run-train)
     + [Run Test](https://github.com/wooseokyourself/how-to-yolo#run-test)
@@ -292,7 +292,7 @@ In the Windows:
 
 ![x64 and Release](https://habrastorage.org/webt/ay/ty/f-/aytyf-8bufe7q-16yoecommlwys.jpeg)
 
-### Compile and Build Darknet : Windows (using ```CMake```) - Recommended
+### Compile and Build Darknet : Windows (using ```vcpkg```) - Recommended
 
 ***아래는 원본 darknet의 README.md를 그대로 복사해 온 내용입니다.***   
    
