@@ -217,7 +217,7 @@ you@you:~ $ sudo dpkg -i <filename>
 ### Download Pre-trained Model
 https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137 를 다운로드하여 darknet 디렉토리 안에 저장합니다. 리눅스의 경우 다음을 통해 다운받을 수 있습니다.
 ```console
-you@you:~ $ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137
+you@you:~/darknet $ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137
 ```
 
 ## Compile and Build Darknet : Linux (using ```make```) - Not Recommended
