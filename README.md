@@ -2,6 +2,7 @@
 
 Darknet을 통해 YOLO 모델을 위한 커스텀 데이터를 만들고, 학습하고, 테스트하는 방법을 설명합니다.   
 딥러닝과 Object Detection에 대한 원리 혹은 개념 설명은 포함하지 않습니다.   
+*목차*
 + [Labelling](https://github.com/wooseokyourself/how-to-yolo#labelling)
 + [Struct Custom Dataset](https://github.com/wooseokyourself/how-to-yolo#struct-custom-dataset)
 + [Modify yolov4.cfg](https://github.com/wooseokyourself/how-to-yolo#modify-yolov4cfg)
